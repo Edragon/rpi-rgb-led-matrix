@@ -228,4 +228,232 @@ LargeSquare64x64Transformer::LargeSquare64x64Transformer()
 Canvas *LargeSquare64x64Transformer::Transform(Canvas *output) {
   return rotated_.Transform(arrange_.Transform(output));
 }
+
+
+/********************************/
+/* P10outdoor Transformer Canvas */
+/********************************/
+class P10outdoorTransformer::TransformCanvas : public Canvas {
+public:
+  TransformCanvas() : delegatee_(NULL) {}
+
+  void SetDelegatee(Canvas* delegatee);
+
+  virtual void Clear();
+  virtual void Fill(uint8_t red, uint8_t green, uint8_t blue);
+  virtual int width() const;
+  virtual int height() const;
+  virtual void SetPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue);
+
+private:
+  Canvas *delegatee_;
+};
+
+void P10outdoorTransformer::TransformCanvas::SetDelegatee(Canvas* delegatee) {
+  delegatee_ = delegatee;
+}
+
+void P10outdoorTransformer::TransformCanvas::Clear() {
+  delegatee_->Clear();
+}
+
+void P10outdoorTransformer::TransformCanvas::Fill(uint8_t red, uint8_t green, uint8_t blue) {
+  delegatee_->Fill(red, green, blue);
+}
+
+int P10outdoorTransformer::TransformCanvas::width() const {
+  return delegatee_->width() / 4;
+}
+
+int P10outdoorTransformer::TransformCanvas::height() const {
+  return delegatee_->height() * 2;
+}
+
+void P10outdoorTransformer::TransformCanvas::SetPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue) {
+  int new_x = x;
+  int new_y = y;
+  int panel_x = x / 32;
+  int x_offset = 0;
+  switch (y % 8){
+    case 0: x_offset = 64;break;
+    case 1: x_offset = 64;break;
+    case 2: x_offset = 72;break;
+    case 3: x_offset = 72;break;
+    case 4: x_offset = 0;break;
+    case 5: x_offset = 0;break;
+    case 6: x_offset = 8;break;
+    case 7: x_offset = 8;break;
+  }
+
+  new_y = 4 * (y / 8) + (y % 2);
+
+  if ((y % 4) < 2) {  //countdown
+    new_x = ((x % 32) * -1) + (24 * (((x % 32) / 8) + 1)) - 17;
+  } else {
+    new_x = (x % 8) + (16 * ((x % 32) / 8));
+  }
+  new_x += x_offset;
+  new_x += (panel_x * 128);
+  delegatee_->SetPixel(new_x, new_y, red, green, blue);
+}
+/*************************/
+/* P10outdoor Transformer */
+/*************************/
+P10outdoorTransformer::P10outdoorTransformer()
+  : canvas_(new TransformCanvas()) {
+}
+
+P10outdoorTransformer::~P10outdoorTransformer() {
+  delete canvas_;
+}
+
+Canvas *P10outdoorTransformer::Transform(Canvas *output) {
+  assert(output != NULL);
+
+  canvas_->SetDelegatee(output);
+  return canvas_;
+}
+
+/****************************/
+/* Electrodragon transformer */
+/****************************/
+
+class EDTransformer::TransformCanvas : public Canvas {
+public:
+  TransformCanvas() : delegatee_(NULL) {}
+
+  void SetDelegatee(Canvas* delegatee);
+
+  virtual void Clear();
+  virtual void Fill(uint8_t red, uint8_t green, uint8_t blue);
+  virtual int width() const;
+  virtual int height() const;
+  virtual void SetPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue);
+
+private:
+  Canvas *delegatee_;
+};
+
+void EDTransformer::TransformCanvas::SetDelegatee(Canvas* delegatee) {
+  delegatee_ = delegatee;
+}
+
+void EDTransformer::TransformCanvas::Clear() {
+  delegatee_->Clear();
+}
+
+void EDTransformer::TransformCanvas::Fill(uint8_t red, uint8_t green, uint8_t blue) {
+  delegatee_->Fill(red, green, blue);
+}
+
+int EDTransformer::TransformCanvas::width() const {
+  return delegatee_->width() / 2;
+}
+
+int EDTransformer::TransformCanvas::height() const {
+  return delegatee_->height();
+}
+
+void EDTransformer::TransformCanvas::SetPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue) {
+  	new_x = ((x / 16) * 32) + (x % 16);
+	if ((y/8)%2 == 1) {
+		new_x += 16; 
+	}
+	new_y = ((y / 16) * 16) + (y % 8); 	
+	delegatee_->SetPixel(new_x, new_y, red, green, blue);
+    
+}
+/*************************/
+/* P10outdoor Transformer */
+/*************************/
+EDTransformer::EDTransformer()
+  : canvas_(new TransformCanvas()) {
+}
+
+EDTransformer::~EDTransformer() {
+  delete canvas_;
+}
+
+Canvas *EDTransformer::Transform(Canvas *output) {
+  assert(output != NULL);
+
+  canvas_->SetDelegatee(output);
+  return canvas_;
+}
+
+
+/*********************************/
+/*  CRAZy Chinese Transformer    */
+/*********************************/
+
+class CrazyChineseTransformer ::TransformCanvas : public Canvas {
+public:
+  TransformCanvas() : delegatee_(NULL) {}
+
+  void SetDelegatee(Canvas* delegatee);
+
+  virtual void Clear();
+  virtual void Fill(uint8_t red, uint8_t green, uint8_t blue);
+  virtual int width() const;
+  virtual int height() const;
+  virtual void SetPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue);
+
+private:
+  Canvas *delegatee_;
+};
+
+void CrazyChineseTransformer ::TransformCanvas::SetDelegatee(Canvas* delegatee) {
+  delegatee_ = delegatee;
+}
+
+void CrazyChineseTransformer ::TransformCanvas::Clear() {
+  delegatee_->Clear();
+}
+
+void CrazyChineseTransformer ::TransformCanvas::Fill(uint8_t red, uint8_t green, uint8_t blue) {
+  delegatee_->Fill(red, green, blue);
+}
+
+int CrazyChineseTransformer ::TransformCanvas::width() const {
+  return delegatee_->width() / 2;
+}
+
+int CrazyChineseTransformer ::TransformCanvas::height() const {
+  return delegatee_->height() * 2;
+}
+
+void CrazyChineseTransformer ::TransformCanvas::SetPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue) {
+ 
+	int new_x = 0;
+	int new_y = 0;
+	new_x = ((x / 32) * 64) + (x % 32);
+	if ((y & 8) == 0) {
+		new_x += 32;
+	}  
+	new_y = ((y / 16) * 8) + (y % 8);
+	delegatee_->SetPixel(new_x, new_y, red, green, blue);
+	//fprintf(stdout, "value of new_x new_y :: %d %d\n ", new_x, new_y);
+}
+/*************************/
+/* P10outdoor Transformer */
+/*************************/
+CrazyChineseTransformer ::CrazyChineseTransformer ()
+  : canvas_(new TransformCanvas()) {
+}
+
+CrazyChineseTransformer ::~CrazyChineseTransformer () {
+  delete canvas_;
+}
+
+Canvas *CrazyChineseTransformer ::Transform(Canvas *output) {
+  assert(output != NULL);
+
+  canvas_->SetDelegatee(output);
+  return canvas_;
+}
+
+
+
+
 } // namespace rgb_matrix
+
