@@ -355,7 +355,10 @@ int EDTransformer::TransformCanvas::height() const {
 }
 
 void EDTransformer::TransformCanvas::SetPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue) {
-  	new_x = ((x / 16) * 32) + (x % 16);
+  	int new_x = x;
+	int new_y = y;
+  
+	new_x = ((x / 16) * 32) + (x % 16);
 	if ((y/8)%2 == 1) {
 		new_x += 16; 
 	}
